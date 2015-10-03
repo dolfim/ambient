@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head> 
+<title>Ambient: Big data made easy</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-194x194.png" sizes="194x194">
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
+<link rel="icon" type="image/png" href="/android-chrome-192x192.png" sizes="192x192">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<meta name="msapplication-TileColor" content="#9f00a7">
+<meta name="msapplication-TileImage" content="/mstile-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,700,300" rel="stylesheet" type="text/css">
+<link href="css/general.css"  rel="stylesheet" type="text/css"/>
+<link media="handheld, only screen and (max-width: 480px), only screen and (max-device-width: 854px)" href="css/mobile.css" rel="stylesheet" type="text/css"/>
+
+<script src="scripts/jquery/jquery-2.1.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+<script src="scripts/jquery/jquery.ui.touch-punch.min.js"></script>
+<script src="scripts/common.js"></script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-46656307-1', 'comp-phys.org');
+  ga('send', 'pageview');
+
+</script>
+</head> 
+
+<body>
+<div id="cover" style="display: table; position: absolute; top: 0px; z-index: 1; width: 100%; height: 100%;">
+<img class="revert" src="images/m.png" style="top: 35px; left: 50%; margin-left: -320px;">
+
+<section class="content" id="intro">
+<div class="cell" style="box-shadow: 0px 5px 25px black;">
+
+    <div style="position: absolute; top: 50%; left: 0px;">
+        <img id="prev" src="images/prev.png">
+    </div>
+    <div style="position: absolute; top: 50%; right: 0px;">
+        <img id="next" src="images/next.png">
+    </div>
+    <div class="how" id="part0" style="height: 73px;">
+        <div class="title" style="position: absolute; display: inline-block; margin-top: 20px; margin-left: 17px;"><span>Ambient</span>
+            <div id="motto">
+           Big data made easy. Develop fast, scalable applications for<br> cloud and cluster CPU/GPU Linux server environments.<br>
+            </div>
+        </div>
+    </div>
+    <div class="cell-center how" id="part1" style="font-size: 14px; padding-left: 35px; line-height: 150%;">
+        <div class="title-part" style="margin-bottom: 65px;">What is it</div>
+
+        Ambient is a library that makes parallel programming easy: existing single-core apps can be <i>stretched</i> onto available resources. Just bind function calls to a particular machine's CPU or GPU.<br><br> Ambient does the rest: <i>memory transport (CUDA or MPI), parallelism extraction and threading</i>.
+    </div>
+    <div class="cell-center how" id="part3" style="font-size: 14px; padding-left: 30px;">
+
+        <div class="example">
+		<div class="perf">Performance chart</div><img class="perf_detail" src="images/gemm.png">
+                <div class="title-part">Example: Matrix product</div>
+<!--{{{-->
+<pre class="example">
+<code><span class="highlight">#include "ambient/ambient.hpp"</span>
+<span class="highlight">#include "ambient/container/numeric/matrix.hpp"</span>
+
+<span class="pink">#define N 16384</span>
+<span class="black">
+<span class="green">int</span> main(){
+     <span class="highlight">ambient::tiles&lt; ambient::matrix&lt;<span class="green">double</span>&gt; &gt;</span> a(N,N), b(N,N), c(N,N);
+
+     <span class="red">for</span>(<span class="green">int</span> i = <span class="red">0</span>; i &lt; a.mt; i++)
+     <span class="red">for</span>(<span class="green">int</span> j = <span class="red">0</span>; j &lt; a.nt; j++){
+         ambient::numeric::fill_random(a.tile(i,j));
+         ambient::numeric::fill_random(b.tile(i,j));
+     }   
+     <span class="red">for</span>(<span class="green">int</span> k = <span class="red">0</span>; k &lt; a.nt; k++)
+     <span class="red">for</span>(<span class="green">int</span> j = <span class="red">0</span>; j &lt; c.nt; j++)
+     <span class="red">for</span>(<span class="green">int</span> i = <span class="red">0</span>; i &lt; c.mt; i++)
+     ambient::numeric::gemm_fma(a.tile(i,k), b.tile(k,j), c.tile(i,j));
+
+     <span class="highlight">ambient::sync();</span>
+     return 0;
+}</span></code></pre>  
+<!--}}}-->
+        </div>
+
+    </div>
+    <div class="cell-center how" id="part4" style="font-size: 14px; padding-left: 30px;">
+
+        <div class="example">
+		<div class="perf">Performance chart</div><img class="perf_detail" src="images/pgemm.png">
+                <div class="title-part">Example: Matrix product (MPI)</div>
+<!--{{{-->
+<pre class="example">
+<code><span class="highlight">#include "ambient/ambient.hpp"</span>
+<span class="highlight">#include "ambient/container/numeric/matrix.hpp"</span>
+
+<span class="pink">#define N 32768</span>
+<span class="black">
+<span class="highlight">ambient::scope::const_iterator</span> where(int i, int j){
+    return (<span class="highlight">ambient::scope::begin()</span> + j % ambient::scope::size());
+}
+
+<span class="green">int</span> main(){
+     <span class="highlight">ambient::tiles&lt; ambient::matrix&lt;<span class="green">double</span>&gt; &gt;</span> a(N,N), b(N,N), c(N,N);
+
+     <span class="red">for</span>(<span class="green">int</span> i = <span class="red">0</span>; i &lt; a.mt; i++)
+     <span class="red">for</span>(<span class="green">int</span> j = <span class="red">0</span>; j &lt; a.nt; j++){
+         <span class="highlight">ambient::actor proc(where(i,j));</span>
+         ambient::numeric::fill_random(a.tile(i,j));
+         ambient::numeric::fill_random(b.tile(i,j));
+     }   
+     <span class="red">for</span>(<span class="green">int</span> k = <span class="red">0</span>; k &lt; a.nt; k++)
+     <span class="red">for</span>(<span class="green">int</span> j = <span class="red">0</span>; j &lt; c.nt; j++)
+     <span class="red">for</span>(<span class="green">int</span> i = <span class="red">0</span>; i &lt; c.mt; i++){
+         <span class="highlight">ambient::actor proc(where(i,j));</span>
+         ambient::numeric::gemm_fma(a.tile(i,k), b.tile(k,j), c.tile(i,j));
+     }
+     <span class="highlight">ambient::sync();</span>
+     return 0;
+}</span></code></pre>  
+<!--}}}-->
+        </div>
+
+    </div>
+    <div class="cell-center how" id="part2" style="font-size: 14px; padding-left: 30px;">
+
+        <div class="example">
+                <div class="title-part">Example: Binding calls</div>
+<!--{{{-->
+<pre class="example"><code><span class="highlight">#include "ambient/ambient.hpp"</span>
+<span class="highlight">#include "ambient/container/vector.hpp"</span>
+<span class="black">
+template&lt;typename T&gt;
+void reverse(<span class="highlight">ambient::vector&lt;T&gt;</span>&amp; vec){
+    int start = 0, end = vec.size();
+    while((start != end) &amp;&amp; (start != --end)){
+        std::swap(vec[start],vec[end]); start++;
+    }
+}
+
+int main(){
+    <span class="highlight">ambient::vector&lt;int&gt;</span> a(100);
+    <span class="highlight">ambient::</span><span class="pink">bind_cpu</span>( reverse&lt;int&gt;, a );
+    <span class="highlight">ambient::</span><span class="pink">bind_cpu</span>( [](<span class="highlight">ambient::vector&lt;int&gt;</span>&amp; vec){ reverse(vec); }, a );
+    <span class="highlight">ambient::sync();</span> <span class="dark-blue">// execute in parallel: dependencies are respected</span>
+    return 0;
+}</span></code></pre>
+<!--}}}-->
+        </div>
+
+    </div>
+    
+
+    <center style="position: absolute; bottom: 0px; margin-left: -410px; left: 50%;">
+        <a href="http://www.ethz.ch/en.html" target="_blank"><img class="sponsor" id="ethz" src="images/logos/ethz.png"></a>
+        <a href="http://unige.ch" target="_blank"><img class="sponsor" id="unige" src="images/logos/unige.png"></a>
+        <a href="http://cscs.ch" target="_blank"><img class="sponsor" id="cscs" src="images/logos/cscs.png"></a>
+    </center>
+    <div style="position: absolute; bottom: 0px; width: 100%; background-color: black; height: 16px;">
+        <img src="images/down.svg" style="width: 30px; margin-left: 70px; vertical-align: top; margin-top: -1px;">
+    </div>
+</div>
+</section>
+
+</div>
+
+<section class="content" id="home" style="background-color: #111;">
+<div class="cell"><div class="cell-center" style="width: 700px;">
+
+<img src="images/make.png" style="height: 30px; position: absolute; opacity: .85; margin-top: -62px; margin-left: 30px;">
+<div id="external">
+    <div id="github">Ambient On GitHub</div><div id="docs">Developer's Guide</div>
+</div>
+
+<pre class="make" id="impi"><code>
+<span class="black">
+<span class="dark-blue"># Makefile example for Intel MPI compiler</span>
+
+<span class="blue">AMBIENT_INCLUDE</span>?=<span class="pink">&lt;ambient include folder&gt;</span>
+
+<span class="dark-blue"># mkl dependencies if ambient::matrix class is used</span>
+<span class="blue">DEPS</span>?= -mkl
+
+<span class="blue">FLAGS</span>?= -std=c++11 -O3 -DNDEBUG -I<span class="blue">$(AMBIENT_INCLUDE)</span>
+
+<span class="blue">app:</span> app.cpp
+    <span class="red"><span class="blue">$(CXX)</span> app.cpp -o app <span class="blue">$(FLAGS) $(DEPS)</span></span>
+
+</code></pre>
+
+<pre class="make" id="icc"><code>
+<span class="black">
+<span class="dark-blue"># Makefile example for Intel compiler (no MPI)</span>
+
+<span class="blue">AMBIENT_INCLUDE</span>?=<span class="pink">&lt;ambient include folder&gt;</span>
+
+<span class="dark-blue"># mkl dependencies if ambient::matrix class is used</span>
+<span class="blue">DEPS</span>?= -mkl
+
+<span class="blue">FLAGS</span>?= -std=c++11 -O3 -DNDEBUG -DAMBIENT_MPI=MPI_DISABLE -I<span class="blue">$(AMBIENT_INCLUDE)</span>
+
+<span class="blue">app:</span> app.cpp
+    <span class="red"><span class="blue">$(CXX)</span> app.cpp -o app <span class="blue">$(FLAGS) $(DEPS)</span></span>
+
+</code></pre>
+
+<pre class="make" id="gcc"><code>
+<span class="black">
+<span class="dark-blue"># Makefile example for GNU C++ compiler (no MPI)</span>
+
+<span class="blue">AMBIENT_INCLUDE</span>?=<span class="pink">&lt;ambient include folder&gt;</span>
+
+<span class="dark-blue"># mkl dependencies if ambient::matrix class is used</span>
+<span class="blue">DEPS</span>?= -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 <span class="red">\</span>
+       -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -lm -m64
+
+<span class="blue">FLAGS</span>?= -std=c++11 -O3 -DNDEBUG -DAMBIENT_MPI=MPI_DISABLE -fopenmp -I<span class="blue">$(AMBIENT_INCLUDE)</span>
+
+<span class="blue">app:</span> app.cpp
+    <span class="red"><span class="blue">$(CXX)</span> app.cpp -o app <span class="blue">$(FLAGS) $(DEPS)</span></span>
+</code></pre>
+
+<img class="revert revert-bottom" src="images/m.white.png" style="margin-bottom: 70px; left: 40px; margin-left: 30px;">
+<div id="make-options">
+<div class="make" id="impi">Intel MPI Compiler (mpicxx)</div>
+<div class="make" id="icc">Intel Compiler (icpc)</div>
+<div class="make" id="gcc">GNU Compiler (g++)</div>
+</div>
+
+</div>
+</div>
+</section>
+</body> 
+</html>

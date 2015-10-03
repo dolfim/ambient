@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html>
+<head> 
+<title>Ambient: Developer's Guide</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+<link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,700,300" rel="stylesheet" type="text/css">
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+    div.title {
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%);
+        -webkit-transform: translateX(-50%);
+        margin-top: -30px;
+        font-size: 36px;
+        font-family: 'Open Sans', sans-serif;
+        color: #333;
+        font-weight: 300;
+        white-space: nowrap;
+    }
+    div, a {
+        display: block;
+        font-size: 12px;
+        font-family: arial;
+    }
+    a.heading {
+        font-size: 16px;
+    }
+    p a {
+        display: inline;
+        color: #39D;
+    }
+    section {
+        display: block;
+        margin-bottom: 30px;
+        border-bottom: 1px solid #CCC;
+    }
+    section#intro {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 100px;
+        border-bottom: 0px;
+    }
+    section#table-of-contents {
+    }
+    section#table-of-contents a {
+        color: #39D;
+    }
+    section#table-of-contents div {
+        padding: 60px;
+    }
+    section p {
+        width: 60%;
+        font-family: arial;
+        font-size: 12px;
+        padding-left: 35px;
+    }
+    p.outline {
+        background-color: #FFE;
+        margin-left: 30px;
+        padding: 10px;
+        border-radius: 4px;
+    }
+    section section {
+        padding-bottom: 30px;
+    }
+    section:last-child {
+        border-bottom: 0;
+    }
+    ul, li {
+        width: 60%;
+        font-family: arial;
+        font-size: 12px;
+        margin-left: 20px;
+    }
+    ul {
+        margin-bottom: 30px;
+    }
+    li {
+        margin-bottom: 10px;
+    }
+    h1 {
+        display: block;
+        padding: 30px;
+        font-size: 50px;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 300;
+    }
+    h2 {
+        display: block;
+        padding: 30px;
+        font-size: 25px;
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 300;
+    }
+    h3 {
+        display: block;
+        padding-left: 35px;
+        font-family: arial;
+        font-size: 12px;
+        margin-top: 30px;
+    }
+
+    pre { color: #000000; background-color: #FEFEFE; }
+    .comment { color: #9999DD; font-style: italic; }
+    .string { color: #009900; }
+    .char { color: #009900; }
+    .float { color: #996600; }
+    .int { color: #FF3333; }
+    .bool { color: #000000; font-weight: bold; }
+    .type { color: #66DD33; }
+    .flow { color: #FF9900; }
+    .keyword { color: #66DD33; }
+    .operator { color: #663300; font-weight: bold; }
+
+    div.member, div.member-group {
+        display: table-row;
+    }
+    div.member-name, div.member-descr, div.member-group-name, div.member-note {
+        display: table-cell;
+        width: 140px;
+        padding: 3px;
+        border-bottom: 1px solid #EFEFEF;
+    }
+    div.member-descr {
+        width: auto;
+    }
+    div.member-group-name {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        font-weight: bold;
+    }
+    div.member-title {
+        display: table-cell;
+        padding-bottom: 13px;
+        font-weight: bold;
+    }
+    div.member-group > div {
+        border-bottom: 0;
+    }
+    @media screen {
+        section#intro {
+            box-shadow: 1px 1px 5px rgba(30,30,90,0.4);
+        }
+    }
+    @media print { /* wkhtmltopdf --print-media-type input.html output.pdf */
+        section {
+            page-break-after: always;
+            border-bottom: 0;
+        }
+        section section {
+            page-break-after: auto;
+        }
+        h1, h2, h3 {
+            page-break-after: avoid;
+        }
+        section p, ul, li {
+            width: auto;
+        }
+        div.member-name, div.member-descr, div.member-group-name, div.member-note {
+            border-bottom: 1px groove white;
+            min-height: 30px;
+        }
+    }
+</style>
+
+</head>
+<body>
+
+<section id="intro">
+    <div class="title">
+        <img src="http://ambient.comp-phys.org/images/m.png" style="width: 34px; height: 26px; margin-right: 14px;">Developer's Guide
+    </div>
+</section>
+
+<section id="table-of-contents">
+    <a name="table-of-contents"><h1>Table of Contents</h1></a>
+    <div>
+        <a href="#quickstart" class="heading">Quick Start</a>
+        <ul>
+            <a href="#installation">Installation</a>
+            <a href="#usage">Usage</a>
+            <a href="#knobs">Misc knobs</a>
+        </ul>
+        <a href="#concepts" class="heading">Overview</a>
+        <ul>
+            <a href="#delayed-execution">Delayed Execution</a>
+            <a href="#dag-extraction">Parallelism Extraction</a>
+            <a href="#mpi">Multi-Process Scheduling (MPI)</a>
+        </ul>
+        <a href="#containers" class="heading">Containers</a>
+        <ul>
+            <a href="#vector">Vector</a>
+            <a href="#partitioned-vector">Partitioned Vector</a>
+            <a href="#iterators">Iterators</a>
+            <a href="#future">Future and Atomic</a>
+            <a href="#matrix">Matrix</a>
+            <a href="#matrix-diagonal">Diagonal Matrix</a>
+            <a href="#tiled-matrix">Tiled Matrix</a>
+            <a href="#custom-types">Custom Types</a>
+        </ul>
+        <a href="#algorithms" class="heading">Algorithms</a>
+        <ul>
+            <a href="#partitioned-vector-algorithms">Partitioned Vector Algorithms</a>
+            <a href="#matrix-algorithms">Matrix Algorithms</a>
+            <a href="#tiled-matrix-algorithms">Tiled Matrix Algorithms</a>
+        </ul>
+    </div>
+</section>
+
+<section id="quickstart">
+    <a name="quickstart"><h1>Quick Start</h1></a>
+    <section><a name="installation"><h2>Installation</h2></a>
+
+    <p>Ambient is a header-only library. This means that installing the sources somewhere is enough:
+    </p>
+    <p class="outline" style="background-color: #EEE;">
+    cmake<span class="operator"> .</span><br> 
+    make install
+    </p>
+    <p class="outline"><b>Note:</b> commands above will install the sources to /opt/ambient (use -DCMAKE_INSTALL_PREFIX=&lt;path&gt; to change it).</p>
+    <h3>Numeric dependencies</h3>
+    <p>Ambient itself doesn't have any requirements except for having C++11 compatible compiler (i.e. -std=c++11 flag) but Ambient's numeric::matrix class has 
+    a few dependencies and it's the right place to make sure they are satisfied if you are going to use it:</p>
+    <p class="outline" style="background-color: #EEE;">
+    mkdir _build<span class="operator"> &amp;&amp;</span> cd _build<br>
+    cmake<span class="operator"> -</span>DAMBIENT_REGRESSION_TESTS<span class="operator">=</span>ON<span class="operator"> ..</span><br>
+    make<br>
+    make test<br>
+    make install
+    </p>
+    <p>
+    Primarily, you need to make sure that <a href="https://software.intel.com/en-us/intel-mkl" target="_blank">Intel&reg; MKL</a> or compatible math package is present (note: in a few algorithms we directly depend upon <a href="http://icl.cs.utk.edu/plasma/software/" target="_blank">Plasma library</a> so it might be needed as well).
+    </p>
+    <p class="outline">
+    <b>Note:</b> Use -DMKL_LIB_DIR, -DMKL_LIBRARIES to specify the math library and -DPLASMA_LIB_DIR, -DPLASMA_LIBRARIES to specify Plasma library.
+    </p>
+    <p>The configuration being used will be saved to &lt;install path&gt;/share/AmbientConfig.cmake for your convenience.
+    </p>
+    </section>
+    <section style="page-break-before: always;"><a name="usage"><h2>Usage</h2></a>
+    <h3>Compilation</h3>
+    <p>Let's compile your application against Ambient sources. In the simplest form it's as easy as this:
+    </p>
+    <p class="outline" style="background-color: #EEE;">
+    mpicxx<span class="operator"> -</span>std<span class="operator">=</span>c<span class="operator">++</span><span class="int">11</span><span class="operator"> -</span>O3<span class="operator"> -</span>DNDEBUG<span class="operator"> -</span>I<span class="operator">/</span>opt<span class="operator">/</span>ambient<span class="operator">/</span>include app<span class="operator">.</span>cpp
+    </p>
+    <p>In example above we are using the default settings: MPI is assumed to be used in MPI_THREAD_FUNNELED mode and threading backend is determined from the compiler being used (Cilk in case of icc, OpenMP in case of gcc and none otherwise).
+    </p>
+    <p>Otherwise, it's easy to choose an exact flavor:
+        <ul><li>use -DAMBIENT_MPI to select MPI mode (MPI_DISABLE or MPI threading mode are accepted)</li>
+            <li>and -DAMBIENT_THREADING to select the threading backend (CILK, OPENMP or SERIAL)</li>
+        </ul>
+    </p>
+    <p>For example below we are going to use Ambient without MPI (as shared-memory-only) and with OpenMP instead of Cilk:</p>
+    <p class="outline" style="background-color: #EEE;">icpc<span class="operator"> -</span>std<span class="operator">=</span>c<span class="operator">++</span><span class="int">11</span><span class="operator"> -</span>O3<span class="operator"> -</span>DNDEBUG<span class="operator"> -</span>I<span class="operator">/</span>opt<span class="operator">/</span>ambient<span class="operator">/</span>include app<span class="operator">.</span>cpp<span class="operator"> -</span>DAMBIENT_MPI<span class="operator">=</span>MPI_DISABLE<span class="operator"> -</span>DAMBIENT_THREADING<span class="operator">=</span>OPENMP <span class="int">-openmp</span>
+    </p>
+    <h3>Compilation: numeric dependencies</h3>
+    <p>In case of numeric::matrix class being used, one will have to link against the Math/Plasma libraries (which means listing the libraries to link against and their paths).
+    The exact flags will depend upon the math library but in case of Intel&reg; MKL the flags can be calculated using the <a href="https://software.intel.com/en-us/articles/intel-mkl-link-line-advisor" target="_blank">link line advisor</a> (shortcut for icpc: -mkl=sequential).
+    </p>
+    <p class="outline"><b>Important:</b> choose sequential implementation to avoid oversubscribing unless you know what you are doing (see <a href="https://github.com/AlexEngy/ambient/blob/master/src/utils/mkl_parallel.hpp" target="_blank">mkl_parallel.hpp</a> utility).
+    </p>
+    <p>If Plasma-based algorithms are needed - one will have to link against some of its libraries, typically these are "-lplasma -lcoreblas -llapacke -lquark".</p>
+    <p>The respective libraries includes are generally <i>not</i> needed as Ambient already contains declarations of the functions it actually needs.</p>
+    <p>It might be a good idea to finalise the configuration using CMake during the installation and reuse the saved configuration.
+    </p>
+    <h3>Execution</h3>
+    <p>When built, the application can be executed as usual: mpiexec/mpirun as any other MPI application or "as is" when shared-memory-only.</p><p>
+    To customise the runtime configuration just use the threading backend environment variables (i.e. CILK_NWORKERS or OMP_NUM_THREADS). Then the actual configuration (MPI, threading and other parameters) can be checked by setting the <i>AMBIENT_VERBOSE</i> environment variable prior to running an executable.</p> 
+    <p>We have included a few examples at share/examples for you to be able to start right away. Otherwise, be sure to read the <a href="#concepts">overview</a> section of this document to understand the model behind the framework.
+    </p>
+    </section>
+    <section style="page-break-before: always;"><a name="knobs"><h2>Misc knobs</h2></a>
+
+    <p>To get you fully packed - here's a list of optional knobs that might be useful:<br>
+
+    <h3>Compilation flags:</h3>
+    <p>-DAMBIENT_DEFAULT_IB : default blocking factor of tiled containers (2048)</p>
+    <p>-DAMBIENT_INSTR_BULK_CHUNK : number of bytes in the chunk of bulk memory used for instructions logging (~16MB)</p>
+    <p>-DAMBIENT_DATA_BULK_CHUNK : number of bytes in the chunk of bulk memory used for temporary objects (~64MB)</p>
+    <p>-DAMBIENT_COMM_BULK_CHUNK : number of bytes in the chunk of bulk memory used for communications (~64MB)</p>
+    <p class="outline"><b>Note:</b> comm bulk chunk should fit any memory-continuous object being sent to other nodes</p>
+    <p>-DAMBIENT_CHECK_BOUNDARIES : enables boundary overflow checks for spatial memory copies (disabled)</p>
+    <p>-DAMBIENT_SERIAL_COLLECTION : strip thread-safety in operations collection (disabled)</p>
+    <h3>Environment flags:</h3>
+    <p>export AMBIENT_DATA_BULK_LIMIT=P :  limit the data bulk's memory consumption by P percents of total memory (10)</p>
+    <p>export AMBIENT_COMM_BULK_LIMIT=P :  limit the communication bulk's memory consumption by P percents of total memory (20)</p>
+    <p>export AMBIENT_MKL_PARALLEL=1 : to enable mkl_parallel utility (if <a href="https://github.com/AlexEngy/ambient/blob/master/src/utils/mkl_parallel.hpp" target="_blank">mkl_parallel.hpp</a> is included)</p>
+    </p>
+    </section>
+</section>
+
+<section id="concepts">
+    <a name="concepts"><h1>Overview</h1></a>
+
+    <p>This section focuses on explanation of the general concepts behind the Ambient framework. 
+    The core concept to keep in mind (that is connected to the rest of the framework's mechanics) is the "object versioning".
+    In practice it means a slight change in how one reasons about classical object oriented programming. In contrast to the classical
+    programming approach where the object's memory location is fixed (unless one reallocates its data) and frequently modified by
+    means of some computational operations - the Ambient enabled code keeps objects memory conceptually read-only: every modification
+    instead creates a new separate <i>version</i> of the object in memory. (Note: In practice that would mean a really large memory-footprint -
+    so for the classical hardware unnecessary states are optimised away keeping memory footprint on a par with its classical analogue).</p>
+    <p>In the following sub-sections we will focus on how this concept benefits us from the point of view of application parallelisation, providing
+    the reader with the key technical details about the implementation.</p>
+
+    <section><a name="delayed-execution"><h2>Delayed Execution</h2></a>
+
+    <p>In order to make implicit parallelisation possible, Ambient implements the concept of the delayed execution. 
+    When one calls a computational operation on an object - instead of executing it right away (like it
+    would happen in classical programming) - it gets saved for the later execution when more operations are
+    available to be executed in parallel.</p>
+
+    <p>Before discussing caveats of delayed execution implementation, let's see some syntax sugar.<br>
+    The developer writing his own functions operating on Ambient-enabled data-types has a choice between explicit and implicit call forms:
+
+    <ul>
+        <li>
+            The explicit form is fairly similar to std::async call:<br>
+<pre><span class="keyword">template</span><span class="operator"> &lt;</span><span class="keyword"> class</span> Function<span class="operator">,</span><span class="keyword"> class</span><span class="operator">...</span> Args<span class="operator"> &gt;</span><span class="type">
+void</span> bind<span class="operator">(</span> Function<span class="operator">&amp;&amp;</span> f<span class="operator">,</span> Args<span class="operator">&amp;&amp;...</span> args<span class="operator"> );</span></pre>
+
+            This form supports both classical functions and lambdas. So typical invocation would look like this:<br>
+<pre>ambient<span class="operator">::</span>vector<span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> vec<span class="operator">;</span>
+ambient<span class="operator">::</span>bind<span class="operator">([](</span>ambient<span class="operator">::</span>vector<span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;&amp;</span> v<span class="operator">){</span><span class="comment"> /* */</span><span class="operator"> },</span> vec<span class="operator">);</span>
+</pre>
+        </li>
+        <li>
+            The implicit form is designed to keep code appearance close to its natural form: one just has to export the target function under some alias name which can be called then the same way as the original function:<br>
+<pre>AMBIENT_STATIC_BIND_TEMPLATE<span class="operator">(</span>foo<span class="operator">,</span> foo_async<span class="operator">);</span></pre>
+            or for not templated functions:
+<pre>AMBIENT_STATIC_BIND<span class="operator">(</span>foo<span class="operator">,</span> foo_async<span class="operator">);</span></pre>
+        </li>
+    </ul>
+    </p>
+
+    <p>The key difference comparing to std style here is that Ambient-enabled function calls don't return any handles or objects. Instead, an explicit synchronisation (i.e. ambient::sync() call) or the object's element access will trigger the actual computations.<br><br>
+    When the function call is executed it does a number of specific actions in order to be able to execute this function later in parallel:
+    <ul>
+        <li>During the compilation time, the function prototype is examined. If the function argument is not marked as const, Ambient will create a new revision of the
+            object that was passed expecting modification of the object. Otherwise (if const is present) the current revision will be used.</li>
+        <li>Due to the limited life-time of C++ objects, Ambient will copy the non-Ambient data-types (i.e. int, size_t) into its own heap-based memory (Ambient enabled data-types are protected against out-of-scope access since their memory is managed by Ambient).</li>
+        <li>Finally the function will be placed into a graph of operations for the latter execution (keeping the sequential order of data modification intact due to dependency tree of the version control system).</li>
+    </ul>
+    </p>
+    </section>
+    <section><a name="dag-extraction"><h2>Parallelism Extraction</h2></a>
+
+    <h3>Task parallelism</h3>
+    <p>Now that functions are executed in a delayed manner - the whole program execution transforms into logging of which operations should be executed (alongside with corresponding objects versions). That is at any given moment we have a directed acyclic graph of the operations ready for parallel traversal.<br>
+    <br>
+    The version control plays a crtical role here:<br>
+    <ul>
+        <li>It makes sure that the execution order of the operations is correct by tracking whether the needed objects versions are already produced (hence making application parallel execution reproducible and eliminating possibility of race conditions).</li>
+        <li>And, second, what's espesially important from the parallelism point of view, version control allows a much higher degree of parallelism since we can deal with multiple versions of an object at the same time.</li>
+    </ul>
+    </p>
+    <p class="outline">Consider an example where one uses a matrix N times for the read operations, then modifies it and uses it another N times for other read operations. Classically only N operations can be executed in parallel while Ambient enabled code will have no problem performing 2N operations in parallel using two revisions of the matrix at the same time. Similarly Ambient makes it easy to implicitely extract parallelism from any target application algorithm.
+    </p>
+    <p>Once the operations set is sufficiently large, one either accesses the container's memory or explicitely calls ambient::sync() to trigger the actual execution.<br>
+    At that moment Ambient will start parallel traversing of the collected graph using Cilk, OpenMP or other threading libraries to schedule the functions execution (tasks) across different threads.
+    </p>
+    <h3>Data parallelism</h3>
+    <p>The aforesaid concerns dominantly the task parallelism. That is the described model is effective when different operations are working on different data in parallel. But it doesn't help much with data parallelism when the same operation needs to be applied to multiple data in parallel. So specifically for the problems requiring data parallelism we have designed a set of containers that keep the data in a partitioned form. Hence allowing task parallelism to be used for data parallelism.
+    </p>
+    <p>An example of such container would be the matrix <a href="#tiled-matrix">tiles class</a>: it represents a set of square matrices that compose the original matrix (where each matrix-tile is an Ambient-enabled data-type with versioning semantics). So when one calls a matrix multiplication operation - it will be decomposed into series of matrix multiplications amongst tiles composing the original matrix. Hence providing efficient data parallelism even for a single algebraic operation.</p>
+    <p>Similarly a more general purpose container would be a <a href="#partitioned-vector">partitioned vector class</a>. Analogously to tiles class, it deals with the original vector as a set of vector chunks. This container already supports a subset of STL algorithms and is open for extension.
+    </p>
+    <p class="outline">
+    <b>Note:</b> Ambient doesn't prevent one from using the parallelisation capabilities of the underlying threading framework inside Ambient's bound calls.<br>
+    An example of such use would be calls to parallel variants of <a href="https://software.intel.com/en-us/intel-mkl" target="_blank">Intel® Math Kernel Library</a> functions inside bound calls (see the README.md for the list of the corresponding environment variables).</p> 
+    </section>
+    <section><a name="mpi"><h2>Multi-Process Scheduling (MPI)</h2></a>
+
+
+    <p>Classically, in order to run an application on a cluster, one normally has to resort to low-level MPI parallelisation where one has to explicitely write on which MPI rank the code should be executed and transfer back and forth the necessary data via send/receive calls. Thus polluting the source code with transfers code which is usually extremely complicated by itself.</p> 
+    <p>In contrast, Ambient was designed from the start to tackle the problems that come with the distributed-memory execution model:</p>
+    <p><b>First</b> of all, we abstracted away the need to write the transfers code: when the operation is submitted for the execution Ambient already knows what to do since it has a DAG of all operations. So at the time of evaluating function call's arguments Ambient will make sure to issue asynchronous MPI calls to transfer the required data to the target nodes.</p>
+    <p class="outline">Versioning of the objects plays an important role here as well. Since the revision (once its produced) cannot be modified, we can safely issue a transfer without caring about modifications of the memory that needs to be transfered. Plus, due to the fact that we already know which operations will require this version of data, we can construct a binary tree of the nodes to speedup the transfer automatically.</p>
+    <p><b>Second</b>, when it comes to the question "which nodes should execute this operation" - we do the scheduling. Ambient evaluates the node-affinity of the current versions of the arguments (and their memory footprints) then selecting the optimal operation destination.</p>
+
+    <p>While in the first version of the framework the scheduling was completely automatic, we found out that automatic scheduling frequently produces sub-optimal operations distribution when looking at application's execution as a whole. Which, in contrast with shared-memory execution model, enforces a huge penalty on application's performance. Hence we decided to give developers the freedom to schedule parts of the application execution as they see fit: explicitely scheduled regions of the code will always abide the developer's intentions and the unmarked regions will then automatically deduce the node-affinity. </p>
+    <p>Here's how it works. In terms of language machanics, Ambient blends in with the C++ scope concept: one has to create an instance of ambient::actor that will act on the current C++ scope (all operations between actor's construction and destruction will be executed on the respective node).
+    </p>
+
+<pre style="margin-left: 35px;">ambient<span class="operator">::</span>partitioned_vector<span class="operator">&lt;</span>ambient<span class="operator">::</span>vector<span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt; &gt;</span> a<span class="operator">(</span>length<span class="operator">);
+{</span>
+    ambient<span class="operator">::</span>actor guard<span class="operator">(</span>ambient<span class="operator">::</span>scope<span class="operator">::</span>begin<span class="operator">());</span>
+    ambient<span class="operator">::</span>sequence<span class="operator">(</span>a<span class="operator">.</span>begin<span class="operator">(),</span> a<span class="operator">.</span>end<span class="operator">());
+}</span></pre>
+
+    <p>In the example above one can see that we have placed the operations inside brackets (ambient::sequence) to be executed at the first node inside of the <i>ambient::scope</i>. The latter is the way how one treats different application's processes in Ambient. Unlike MPI that uses directly node ranks - Ambient works with ambient::scope iterators that in turn would point to some specific ranks (depending upon the ambient::scope being used).</p>
+
+    <p>In turn, ambient::scope behaviour is similar to the stack model: at any given moment one can access only the inner-most scope that was created from the parent scope's iterators (the outer-most scope already contains all of the processes). Such design enforces code flexibility, while abstracting functions from the run-time process configuration, which can be dynamic in case of fault tolerance.</p>
+
+    <p>Here's a brief example to give an idea of how to use the actors/scopes.</p>
+
+<pre style="margin-left: 35px;"><span class="type">void</span> generate<span class="operator">(</span>ambient<span class="operator">::</span>partitioned_vector<span class="operator">&lt;</span>ambient<span class="operator">::</span>vector<span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt; &gt;&amp;</span> v<span class="operator">,</span><span class="type"> int</span> value<span class="operator">){</span>
+    <span class="comment">// iterating through the given scope's processes</span><span class="flow">
+    for</span><span class="operator">(</span><span class="keyword">auto</span> it<span class="operator"> =</span> ambient<span class="operator">::</span>scope<span class="operator">::</span>begin<span class="operator">();</span> it<span class="operator"> !=</span> ambient<span class="operator">::</span>scope<span class="operator">::</span>end<span class="operator">();</span> it<span class="operator">++){</span>
+        ambient<span class="operator">::</span>actor guard<span class="operator">(</span>it<span class="operator">);</span>
+        v<span class="operator">.</span>partition<span class="operator">(</span>it<span class="operator"> -</span> ambient<span class="operator">::</span>scope<span class="operator">::</span>begin<span class="operator">()).</span>init<span class="operator">(</span>value<span class="operator">);
+    }
+}</span><span class="comment">
+
+// using half of the processes available (NP/2)
+</span>ambient<span class="operator">::</span>scope group<span class="operator">(</span>ambient<span class="operator">::</span>scope<span class="operator">::</span>begin<span class="operator">(),</span> ambient<span class="operator">::</span>scope<span class="operator">::</span>size<span class="operator">()/</span><span class="int">2</span><span class="operator">);</span><span class="comment"> 
+// creating vector with NP/2 partitions
+</span>ambient<span class="operator">::</span>partitioned_vector<span class="operator">&lt;</span>ambient<span class="operator">::</span>vector<span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;,</span> N<span class="operator">&gt;</span> a<span class="operator">(</span>N<span class="operator">*</span>ambient<span class="operator">::</span>scope<span class="operator">::</span>size<span class="operator">());</span><span class="comment">
+// calling function inside the scope of NP/2 processes
+</span>generate<span class="operator">(</span>a<span class="operator">,</span><span class="int"> 13</span><span class="operator">);</span></pre>
+
+    </section>
+</section>
+
+<section id="containers">
+    <a name="containers"><h1>Containers</h1></a>
+
+    <section><a name="vector"><h2>Vector</h2></a>
+    <p>Ambient vector is a general purpose vector similar to std::vector. This class main purpose is to be used as a container data-type in <a href="#partitioned-vector">partitioned_vector class</a>. This class has versioning semantics and can be directly used with custom asynchronous functions.</p><p class="outline"><b>Important</b>: in order to provide functionality similar to std::vector this class has polymorphic behaviour: methods called while in asynchronous mode will behave differently than during serial execution. The need to do that comes from the memory reallocation policy: while in asynchronous mode one can't change vector's capacity and vice versa - the actual vector size (if changed) is not known before execution is complete hence operating with "cached" size.<br><br>
+    The good practice would be changing both vector size and capacity while in serial mode.
+    </p>
+    <h3 style="font-size: 14px;">Class Methods</h3>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-title"></div></div>
+        
+    <div class="member"><div class="member-name">(constructor)</div><div class="member-descr">constructs the vector (memory is allocated upon init)</div><div class="member-note"><i>serial mode only</i></div></div>
+    <div class="member"><div class="member-name">operator =</div><div class="member-descr">assigns values to the container</div><div class="member-note"><i>serial mode only</i></div></div>
+    <div class="member"><div class="member-name">init</div><div class="member-descr">fill the vector with some value (optional)</div><div class="member-note"><i>serial mode only</i></div></div>
+    <div class="member"><div class="member-name">load</div><div class="member-descr">compute operations (enables element access when serial)</div><div class="member-note"><i>serial mode only</i></div></div>
+
+    <div class="member-group"><div class="member-group-name">Element access:</div><div class="member-descr">("load" first if in serial mode)</div></div>
+
+    <div class="member"><div class="member-name">at</div><div class="member-descr">access specified element with bounds checking</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">operator[]</div><div class="member-descr">access specified element</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">front</div><div class="member-descr">access the first element</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">back</div><div class="member-descr">access the last element</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">data</div><div class="member-descr">direct access to the underlying array</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">begin, cbegin</div><div class="member-descr">return an iterator to the beginning</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">end, cend</div><div class="member-descr">return an iterator to the end</div><div class="member-note"></div></div>
+
+    <div class="member-group"><div class="member-group-name">Capacity:</div></div>
+
+    <div class="member"><div class="member-name">empty</div><div class="member-descr">checks whether the container is empty</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">size</div><div class="member-descr">return the number of elements</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">capacity</div><div class="member-descr">return the number of elements that can be held in currently allocated storage</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">cached_size</div><div class="member-descr">return the <i>latest known</i> number of elements</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">measure</div><div class="member-descr">measure and return the current number of elements</div><div class="member-note"><i>serial mode only</i></div></div>
+    <div class="member"><div class="member-name">auto_reserve</div><div class="member-descr">reserves storage as needed</div><div class="member-note"><i>serial mode only</i></div></div>
+    <div class="member"><div class="member-name">reserve</div><div class="member-descr">reserves storage</div><div class="member-note"><i>serial mode only</i></div></div>
+    <div class="member"><div class="member-name">shrink_to_fit</div><div class="member-descr">reduces memory usage by freeing unused memory</div><div class="member-note"><i>serial mode only</i></div></div>
+
+    <div class="member-group"><div class="member-group-name">Modifiers:</div></div>
+
+    <div class="member"><div class="member-name">clear</div><div class="member-descr">clears the contents</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">insert</div><div class="member-descr">inserts one element</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">erase</div><div class="member-descr">erases one element</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">push_back</div><div class="member-descr">adds elements to the end</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">pop_back</div><div class="member-descr">removes the last element</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">resize</div><div class="member-descr">changes the number of elements stored</div><div class="member-note"></div></div>
+    <div class="member"><div class="member-name">swap</div><div class="member-descr">swaps the contents</div><div class="member-note"></div></div>
+
+    </div>
+    </section>
+    <section><a name="partitioned-vector"><h2>Partitioned Vector</h2></a>
+    <p>Unlike <a href="#vector">ambient::vector</a> - partitioned_vector is a container that doesn't have versioning semantics but instead provides an easy way of using underlying container that does have versioning semantics (i.e. ambient::vector). Primarily, this is a class that one would use instead of std::vector to parallelise the target application. An object of this class would denote a vector that consists of multiple chunks that are stored independently in the distributed or shared memory.
+    </p>
+    <h3 style="font-size: 14px;">Class Methods</h3>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-title"></div></div>
+        
+    <div class="member"><div class="member-name">(constructor)</div><div class="member-descr">constructs the vector (memory is allocated upon first use)</div></div>
+    <div class="member"><div class="member-name">(destructor)</div><div class="member-descr">destructs all the chunks</div></div>
+    <div class="member"><div class="member-name">operator =</div><div class="member-descr">assigns values to the container</div></div>
+
+    <div class="member-group"><div class="member-group-name">Element access:</div></div>
+
+    <div class="member"><div class="member-name">operator[]</div><div class="member-descr">access specified element</div></div>
+    <div class="member"><div class="member-name">begin, cbegin</div><div class="member-descr">return an iterator to the beginning</div></div>
+    <div class="member"><div class="member-name">end, cend</div><div class="member-descr">return an iterator to the end</div></div>
+
+    <div class="member-group"><div class="member-group-name">Partition access:</div></div>
+
+    <div class="member"><div class="member-name">partition</div><div class="member-descr">access specified chunk</div></div>
+    <div class="member"><div class="member-name">locate</div><div class="member-descr">return a chunk that contains specified element</div></div>
+
+    <div class="member-group"><div class="member-group-name">Capacity:</div></div>
+
+    <div class="member"><div class="member-name">empty</div><div class="member-descr">checks whether the container is empty</div></div>
+    <div class="member"><div class="member-name">size</div><div class="member-descr">return the number of elements</div></div>
+
+    <div class="member-group"><div class="member-group-name">Modifiers:</div></div>
+
+    <div class="member"><div class="member-name">resize</div><div class="member-descr">changes the number of elements stored</div></div>
+    <div class="member"><div class="member-name">normalize</div><div class="member-descr">resizes chunks to IB (overall content is unchanged)</div></div>
+    <div class="member"><div class="member-name">swap</div><div class="member-descr">swaps the contents</div></div>
+
+    </div>
+    </section>
+    <section><a name="iterators"><h2>Iterators</h2></a>
+    <p>There are two distrinct ideas behind implementation of Ambient iterators:
+       <ul>
+           <li>To abstract from the data-types partitioning in order to simplify algorithms development.</li>
+           <li>Decouple iterators from the actual memory (since the latter might be remote or non-existent).</li>
+       </ul>
+    </p>
+    <h3 style="font-size: 14px;">associated_iterator</h3>
+    <p>As the name goes - this iterator class stores position information but routes dereferences through the associated object that owns this iterator.<br>Note: this iterator doesn't handle underlying partitioning.</p>
+    <h3>Class Methods</h3>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-title"></div></div>
+    <div class="member"><div class="member-name">(constructor)</div><div class="member-descr">construct the iterator (using container and position)</div></div>
+    <div class="member"><div class="member-name">operator ++</div><div class="member-descr">increase position by one</div></div>
+    <div class="member"><div class="member-name">operator +=</div><div class="member-descr">increase iterator position</div></div>
+    <div class="member"><div class="member-name">operator -=</div><div class="member-descr">decrease iterator position</div></div>
+    <div class="member"><div class="member-name">operator *</div><div class="member-descr">access the actual element</div></div>
+    <div class="member"><div class="member-name">get_container</div><div class="member-descr">return the container (owner)</div></div>
+    </div>
+
+    <h3 style="font-size: 14px;">block_iterator</h3>
+    <p>This iterator deals with the partitioned-structure of the container. It's purpose is to iterate through the blocks in a range instead of elements (typically to spawn an asynchronous operation for each block).</p>
+    <h3>Class Methods</h3>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-title"></div></div>
+    <div class="member"><div class="member-name">(constructor)</div><div class="member-descr">construct the iterator (using begin and end iterators)</div></div>
+    <div class="member"><div class="member-name">operator ++</div><div class="member-descr">move to the next block</div></div>
+    <div class="member"><div class="member-name">operator !=</div><div class="member-descr">check if position is different</div></div>
+    <div class="member"><div class="member-name">operator *</div><div class="member-descr">return the current block</div></div>
+    <div class="member"><div class="member-name">n_blocks</div><div class="member-descr">return the number of blocks in range</div></div>
+    <div class="member"><div class="member-name">offset</div><div class="member-descr">return current position</div></div>
+    </div>
+
+    <h3 style="font-size: 14px;">block_tuple_iterator</h3>
+    <p>Similarly to block_iterator, this iterator iterates through the containers blocks. But in this case it cares about blocks mutual alignment in the objects of a tuple. That is it will iterate through maximally available memory-continuous regions (that are continuous in all objects of a tuple).</p>
+    <h3>Class Methods</h3>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-title"></div></div>
+    <div class="member"><div class="member-name">(constructor)</div><div class="member-descr">construct the iterator (using begin iterators and region length)</div></div>
+    <div class="member"><div class="member-name">operator ++</div><div class="member-descr">move to the next common region</div></div>
+    <div class="member"><div class="member-name">operator !=</div><div class="member-descr">check if position is different</div></div>
+    <div class="member"><div class="member-name">locate</div><div class="member-descr">return the current block (for the specified element in a tuple)</div></div>
+    </div>
+
+    <h3 style="font-size: 14px;">block_pair_iterator</h3>
+    <p>A trivial case of the block_tuple_iteartor class (added for convenience): tuple contains only two objects with the same blocking factor.</p>
+    <h3>Class Methods</h3>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-title"></div></div>
+    <div class="member"><div class="member-name">(constructor)</div><div class="member-descr">construct the iterator (using begin offsets and region length)</div></div>
+    <div class="member"><div class="member-name">operator ++</div><div class="member-descr">move to the next common region</div></div>
+    <div class="member"><div class="member-name">end</div><div class="member-descr">check if the end is reached</div></div>
+    </div>
+    </section>
+    <section><a name="future"><h2>Future and Atomic</h2></a>
+    <h3 style="font-size: 14px;">Future</h3>
+    <p>
+    Most of the time, after all of the heavy lifting is done using partitioned data-types, one has to get out with a single scalar (as an example one might consider vector reduction). Since all non-Ambient data-types are simply copied over for the bind calls - one cannot use a reference and expect it to store the output later after the computation. Instead a valid output scalar might have been a pointer but it won't be accessible by other processes.</p>
+    <p>Therefor the ambient::future data-type was introduced - Ambient will make sure to transfer its memory to all of the processes as soon as the value was calculated. But unlike other Ambient data-types - future doesn't support versioning - so it will trigger computations as soon as its value is accessed or used.
+    </p>
+
+    <h3>Class Methods</h3>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-title"></div></div>
+        
+    <div class="member"><div class="member-name">(constructor)</div><div class="member-descr">construct the future (i.e. from the initial value)</div></div>
+    <div class="member"><div class="member-name">(copy constructor)</div><div class="member-descr">copy construct the future</div></div>
+    <div class="member"><div class="member-name">(destructor)</div><div class="member-descr">free the descriptor</div></div>
+    <div class="member"><div class="member-name">operator =</div><div class="member-descr">swap or calculate and assign</div></div>
+
+    <div class="member-group"><div class="member-group-name">Access:</div></div>
+
+    <div class="member"><div class="member-name">get</div><div class="member-descr">get the value (async only)</div></div>
+    <div class="member"><div class="member-name">set</div><div class="member-descr">set the value (async only)</div></div>
+    <div class="member"><div class="member-name">load</div><div class="member-descr">calculate and return the value (serial only)</div></div>
+    <div class="member"><div class="member-name">operator T</div><div class="member-descr">same as load</div></div>
+
+    </div><br><br>
+    <h3 style="font-size: 14px;">Atomic</h3>
+    <p>While the ambient::future is appropriate to use most of the time - it might limit the degree of parallelism depending upon the application. For such applications we have added ambient::atomic that behaves exactly as other versioned data-types (except being specialised for a single scalar payload). This data-type eliminates the need to synchronize and broadcast its contents after an operation has finished but it imposes a bigger processing overhead comparing to ambient::future. <i>Use it with caution only if necessary</i>.
+    </p>
+    <h3>Class Methods</h3>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-title"></div></div>
+        
+    <div class="member"><div class="member-name">(constructor)</div><div class="member-descr">construct the atomic (i.e. from the initial value)</div></div>
+    <div class="member"><div class="member-name">(copy constructor)</div><div class="member-descr">copy construct the future</div></div>
+    <div class="member"><div class="member-name">operator =</div><div class="member-descr">copy construct and swap</div></div>
+    <div class="member"><div class="member-name">init</div><div class="member-descr">init atomic with the value</div></div>
+    <div class="member"><div class="member-name">swap</div><div class="member-descr">swap the contents</div></div>
+
+    <div class="member-group"><div class="member-group-name">Access:</div><div class="member-descr"> ("load" first if in serial mode)</div></div>
+
+    <div class="member"><div class="member-name">get</div><div class="member-descr">get the value</div></div>
+    <div class="member"><div class="member-name">set</div><div class="member-descr">set the value</div></div>
+    <div class="member"><div class="member-name">load</div><div class="member-descr">calculate the value (serial only)</div></div>
+
+    </div>
+    </section>
+    <section><a name="matrix"><h2>Matrix</h2></a>
+    <p>The Ambient matrix class main purpose is to be used as a container data-type in <a href="#tile-matrix">tiled_matrix class</a>. This class has versioning semantics and can be directly used with custom asynchronous functions. Unlike in multiple numeric libraries - this realisation doesn't have an LDA parameter - that is any resize of the matrix will create a new matrix instead with subsequent copy of the data. This has proven to be beneficial in terms of performance - the algorithms deal with non-strided memory faster (while resizing of the tiled matrix needs to alter only the border tiles).</p>
+
+    <h3 style="font-size: 14px;">Class Methods</h3>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-title"></div></div>
+        
+    <div class="member"><div class="member-name">(constructor)</div><div class="member-descr">constructs the matrix (memory is allocated upon use)</div></div>
+    <div class="member"><div class="member-name">(copy constructor)</div><div class="member-descr">copy constructs the matrix (the memory points to source matrix current version)</div></div>
+    <div class="member"><div class="member-name">operator =</div><div class="member-descr">swap with copy-constructed matrix (if the type is the same)</div></div>
+    <div class="member"><div class="member-name">num_rows</div><div class="member-descr">return the number of rows</div></div>
+    <div class="member"><div class="member-name">num_cols</div><div class="member-descr">return the number of columns</div></div>
+    <div class="member"><div class="member-name">addr</div><div class="member-descr">calculate the element's offset inside of the memory region</div></div>
+    <div class="member"><div class="member-name">trace</div><div class="member-descr">return "future" of the matrix trace</div></div>
+
+    <div class="member-group"><div class="member-group-name">Modifiers:</div></div>
+
+    <div class="member"><div class="member-name">swap</div><div class="member-descr">swap the matrices</div></div>
+    <div class="member"><div class="member-name">resize</div><div class="member-descr">resize the matrix (swap with a new matrix + copy)</div></div>
+    <div class="member"><div class="member-name">transpose</div><div class="member-descr">transpose the matrix (inplace)</div></div>
+    <div class="member"><div class="member-name">conj</div><div class="member-descr">conjugate the matrix (inplace)</div></div>
+    <div class="member"><div class="member-name">operator +=</div><div class="member-descr">add another matrix (inplace)</div></div>
+    <div class="member"><div class="member-name">operator -=</div><div class="member-descr">subtract another matrix (inplace)</div></div>
+    <div class="member"><div class="member-name">operator *=</div><div class="member-descr">multiply by scalar (inplace)</div></div>
+    <div class="member"><div class="member-name">operator /=</div><div class="member-descr">divide by scalar (inplace)</div></div>
+
+    <div class="member-group"><div class="member-group-name">Element access:</div><div class="member-descr">("load" first if in serial mode)</div></div>
+
+    <div class="member"><div class="member-name">operator ()</div><div class="member-descr">access specified element</div></div>
+    <div class="member"><div class="member-name">data()</div><div class="member-descr">direct access to the underlying array</div></div>
+
+    </div>
+
+
+    </section>
+    <section><a name="matrix-diagonal"><h2>Diagonal Matrix</h2></a>
+    <p>This class is a special case of the <a href="#matrix">matrix class</a> for the diagonal matrices. It uses matrix class with the number of columns set to one as a container.</p>
+
+    <h3 style="font-size: 14px;">Class Methods</h3>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-title"></div></div>
+        
+    <div class="member"><div class="member-name">(constructor)</div><div class="member-descr">constructs the matrix (memory is allocated upon use)</div></div>
+    <div class="member"><div class="member-name">num_rows</div><div class="member-descr">return the number of rows</div></div>
+    <div class="member"><div class="member-name">num_cols</div><div class="member-descr">return the number of columns (= num_rows)</div></div>
+    <div class="member"><div class="member-name">addr</div><div class="member-descr">calculate the element's offset inside of the memory region</div></div>
+    <div class="member"><div class="member-name">get_data</div><div class="member-descr">return the underlying container</div></div>
+    <div class="member"><div class="member-name">size</div><div class="member-descr">return the size of the matrix (= num_rows)</div></div>
+    <div class="member"><div class="member-name">resize</div><div class="member-descr">resize the matrix (swap with a new matrix + copy)</div></div>
+
+    <div class="member-group"><div class="member-group-name">Element access:</div></div>
+
+    <div class="member"><div class="member-name">operator ()</div><div class="member-descr">access specified element</div></div>
+    <div class="member"><div class="member-name">operator []</div><div class="member-descr">access specified diagonal element</div></div>
+
+    </div>
+    </section>
+    <section><a name="tiled-matrix"><h2>Tiled Matrix</h2></a>
+    <p>
+    Unlike <a href="#vector">ambient::matrix</a> - <i>tiles</i> class is a container that doesn't have versioning semantics but instead provides an easy way of using underlying container that does have versioning semantics (i.e. ambient::matrix). Primarily, this is a class that one would use to parallelise the target application. An object of this class would denote a matrix that consists of multiple tiles that are stored independently in the distributed or shared memory.
+    </p>
+    <h3 style="font-size: 14px;">Class Methods</h3>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-title"></div></div>
+        
+    <div class="member"><div class="member-name">subset</div><div class="member-descr">return matrix that is a subset of this matrix</div></div>
+    <div class="member"><div class="member-name">identity_matrix</div><div class="member-descr">return identity matrix (only diagonal tiles are filled)</div></div>
+    <div class="member"><div class="member-name">(constructor)</div><div class="member-descr">constructs the matrix (tiles memory is allocated upon use)</div></div>
+    <div class="member"><div class="member-name">(copy constructor)</div><div class="member-descr">constructs the matrix (tiles are copy-constructed)</div></div>
+    <div class="member"><div class="member-name">(destructor)</div><div class="member-descr">delete all the tiles</div></div>
+    <div class="member"><div class="member-name">operator =</div><div class="member-descr">swap with copy-constructed matrix</div></div>
+    <div class="member"><div class="member-name">num_rows</div><div class="member-descr">return the number of rows</div></div>
+    <div class="member"><div class="member-name">num_cols</div><div class="member-descr">return the number of columns (= num_rows)</div></div>
+    <div class="member"><div class="member-name">trace</div><div class="member-descr">return "future" of the matrix trace</div></div>
+    <div class="member"><div class="member-name">empty</div><div class="member-descr">return if the size is zero</div></div>
+    <div class="member"><div class="member-name">save</div><div class="member-descr">write matrix to hdf5 archive</div></div>
+    <div class="member"><div class="member-name">load</div><div class="member-descr">read matrix from hdf5 archive</div></div>
+
+    <div class="member-group"><div class="member-group-name">Modifiers:</div></div>
+
+    <div class="member"><div class="member-name">swap</div><div class="member-descr">swap the contents</div></div>
+    <div class="member"><div class="member-name">transpose</div><div class="member-descr">transpose the matrix (inplace)</div></div>
+    <div class="member"><div class="member-name">conj</div><div class="member-descr">conjugate the matrix (inplace)</div></div>
+    <div class="member"><div class="member-name">resize</div><div class="member-descr">resize the matrix</div></div>
+    <div class="member"><div class="member-name">operator +=</div><div class="member-descr">add another matrix (inplace)</div></div>
+    <div class="member"><div class="member-name">operator -=</div><div class="member-descr">subtract another matrix (inplace)</div></div>
+    <div class="member"><div class="member-name">operator *=</div><div class="member-descr">multiply by scalar (inplace)</div></div>
+    <div class="member"><div class="member-name">operator /=</div><div class="member-descr">divide by scalar (inplace)</div></div>
+
+    <div class="member-group"><div class="member-group-name">Content access:</div></div>
+
+    <div class="member"><div class="member-name">operator ()</div><div class="member-descr">access specified element</div></div>
+    <div class="member"><div class="member-name">operator []</div><div class="member-descr">access specified tile (1D)</div></div>
+    <div class="member"><div class="member-name">tile</div><div class="member-descr">access specified tile (2D)</div></div>
+    <div class="member"><div class="member-name">locate</div><div class="member-descr">access specified element's tile</div></div>
+    <div class="member"><div class="member-name">addr</div><div class="member-descr">get the element's offset inside its tile</div></div>
+
+    </div>
+    </section>
+    <section><a name="custom-types"><h2>Custom types</h2></a>
+    <p>When using Ambient, depending upon the application, it might be necessary to implement a custom problem-specific type.
+       The easiest way to do that (keeping Ambient's versioning semantics) is to derive from ambient::block class. This class 
+       acts as a memory-block with a variable size (determined by constructor's parameters). Otherwise, nothing prevents one
+       from implementing his own data-type from scratch by analogy with ambient::block.</p>
+    <h3 style="font-size: 14px;">Block Class Methods</h3>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-title"></div></div>
+        
+    <div class="member"><div class="member-name">(constructor)</div><div class="member-descr">construct the column-major 2D-block (memory is allocated upon use)</div></div>
+    <div class="member"><div class="member-name">init</div><div class="member-descr">fill the block with the value</div></div>
+    <div class="member"><div class="member-name">lda</div><div class="member-descr">return the y-dimension of the block</div></div>
+    <div class="member"><div class="member-name">data</div><div class="member-descr">direct access to the underlying array</div></div>
+    <div class="member"><div class="member-name">operator ()</div><div class="member-descr">access specified element</div></div>
+
+    </div>
+    </section>
+</section>
+
+<section id="algorithms">
+    <a name="algorithms"><h1>Algorithms</h1></a>
+
+    <section><a name="partitioned-vector-algorithms"><h2>Partitioned Vector Algorithms</h2></a>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-name">copy     </div><div class="member-descr">copies a range of elements to a new location</div></div>
+    <div class="member"><div class="member-name">fill     </div><div class="member-descr">assigns a range of elements a certain value</div></div>
+    <div class="member"><div class="member-name">find     </div><div class="member-descr">finds the first element satisfying specific criteria</div></div>
+    <div class="member"><div class="member-name">for_each </div><div class="member-descr">applies a function to a range of elements</div></div>
+    <div class="member"><div class="member-name">generate </div><div class="member-descr">saves the result of a function in a range</div></div>
+    <div class="member"><div class="member-name">reduce   </div><div class="member-descr">reduce a range of elements (i.e. sum up)</div></div>
+    <div class="member"><div class="member-name">remove   </div><div class="member-descr">removes elements satisfying specific criteria</div></div>
+    <div class="member"><div class="member-name">replace  </div><div class="member-descr">replaces all values satisfying specific criteria with another value</div></div>
+    <div class="member"><div class="member-name">sequence </div><div class="member-descr">fills the range with a sequence of numbers</div></div>
+    <div class="member"><div class="member-name">sort     </div><div class="member-descr">sorts a range into ascending order (bitonic sort)</div></div>
+    <div class="member"><div class="member-name">transform</div><div class="member-descr">applies a function to a range of elements</div></div>
+    <div class="member"><div class="member-name">unique   </div><div class="member-descr">removes consecutive duplicate elements in a range</div></div>
+    </div>
+    </section>
+    <section><a name="matrix-algorithms"><h2>Matrix Algorithms</h2></a>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-name">conj                </div><div class="member-descr">return conjugate of the matrix</div></div>
+    <div class="member"><div class="member-name">copy_rt, copy_lt    </div><div class="member-descr">copy upper/lower triangular matrix</div></div>
+    <div class="member"><div class="member-name">copy_block (_s, _sa)</div><div class="member-descr">copy/copy-scale/copy-scale-add a 2D-block</div></div>
+    <div class="member"><div class="member-name">exp                 </div><div class="member-descr">compute matrix exponential</div></div>
+    <div class="member"><div class="member-name">fill_identity, fill_random, fill_random_hermitian, fill_value</div><div class="member-descr">fill matrix with the corresponding values</div></div>
+    <div class="member"><div class="member-name">geev, heev          </div><div class="member-descr">compute eigenvalues and eigenvectors of the matrix</div></div>
+    <div class="member"><div class="member-name">gemm, gemm_fma      </div><div class="member-descr">perform matrix-matrix multiplication</div></div>
+    <div class="member"><div class="member-name">geqrt (gelqt)       </div><div class="member-descr">perform QR-factorization (or LQ)</div></div>
+    <div class="member"><div class="member-name">inverse             </div><div class="member-descr">return inverse of the matrix</div></div>
+    <div class="member"><div class="member-name">is_hermitian        </div><div class="member-descr">return if the matrix is hermitian</div></div>
+    <div class="member"><div class="member-name">norm_square         </div><div class="member-descr">calculate squared norm of the matrix</div></div>
+    <div class="member"><div class="member-name">overlap             </div><div class="member-descr">calculate dot product between elements of two matrices</div></div>
+    <div class="member"><div class="member-name">scale               </div><div class="member-descr">scale matrix elements</div></div>
+    <div class="member"><div class="member-name">sqrt                </div><div class="member-descr">square root of a diagonal matrix (inplace)</div></div>
+    <div class="member"><div class="member-name">svd                 </div><div class="member-descr">perform singular value decomposition</div></div>
+    <div class="member"><div class="member-name">trace               </div><div class="member-descr">return trace of the matrix</div></div>
+    <div class="member"><div class="member-name">transpose           </div><div class="member-descr">return transpose_view of the matrix</div></div>
+    </div>
+    </section>
+    <section><a name="tiled-matrix-algorithms"><h2>Tiled Matrix Algorithms</h2></a>
+    <div style="display: table; margin-left: 35px;">
+    <div class="member"><div class="member-name">adjoint                     </div><div class="member-descr">return adjoint of the matrix</div></div>
+    <div class="member"><div class="member-name">conj                        </div><div class="member-descr">return conjugate of the matrix</div></div>
+    <div class="member"><div class="member-name">copy_block (_s, _sa)        </div><div class="member-descr">copy/copy-scale/copy-scale-add a 2D-block</div></div>
+    <div class="member"><div class="member-name">exp (_hermitian)            </div><div class="member-descr">compute matrix exponential</div></div>
+    <div class="member"><div class="member-name">geev, heev                  </div><div class="member-descr">compute eigenvalues and eigenvectors of the matrix</div></div>
+    <div class="member"><div class="member-name">gemm                        </div><div class="member-descr">perform matrix-matrix multiplication</div></div>
+    <div class="member"><div class="member-name">gemm_strassen               </div><div class="member-descr">perform matrix-matrix multiplication (strassen algorithm)</div></div>
+    <div class="member"><div class="member-name">generate (_hermitian)       </div><div class="member-descr">generate matrix values</div></div>
+    <div class="member"><div class="member-name">inverse                     </div><div class="member-descr">return inverse of the matrix</div></div>
+    <div class="member"><div class="member-name">is_hermitian                </div><div class="member-descr">return if the matrix is hermitian</div></div>
+    <div class="member"><div class="member-name">merge                       </div><div class="member-descr">merge all tiles into one</div></div>
+    <div class="member"><div class="member-name">norm_square                 </div><div class="member-descr">calculate squared norm of the matrix</div></div>
+    <div class="member"><div class="member-name">overlap                     </div><div class="member-descr">calculate dot product between elements of two matrices</div></div>
+    <div class="member"><div class="member-name">qr (lq)                     </div><div class="member-descr">perform QR-factorization (or LQ)</div></div>
+    <div class="member"><div class="member-name">remove_cols (_rows)         </div><div class="member-descr">remove columns (rows) of the matrix</div></div>
+    <div class="member"><div class="member-name">split                       </div><div class="member-descr">split one matrix into IB-tiles</div></div>
+    <div class="member"><div class="member-name">svd                         </div><div class="member-descr">perform singular value decomposition</div></div>
+    <div class="member"><div class="member-name">sqrt                        </div><div class="member-descr">return square root of a diagonal matrix</div></div>
+    <div class="member"><div class="member-name">trace                       </div><div class="member-descr">return trace of the matrix</div></div>
+    <div class="member"><div class="member-name">transpose                   </div><div class="member-descr">return transpose_view of the matrix</div></div>
+    </div>
+    </section>
+</section>
+
+</body> 
+</html>
+
