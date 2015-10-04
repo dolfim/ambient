@@ -228,7 +228,7 @@
     </p>
     <p class="outline"><b>Note:</b> commands above will install the sources to /opt/ambient (use -DCMAKE_INSTALL_PREFIX=&lt;path&gt; to change it).</p>
     <h3>Numeric dependencies</h3>
-    <p>Ambient itself doesn't have any requirements except for having C++11 compatible compiler (i.e. -std=c++11 flag) but Ambient's numeric::matrix class has 
+    <p>Ambient itself doesn't have any requirements except for having C++14 compatible compiler (i.e. -std=c++14 flag) but Ambient's numeric::matrix class has 
     a few dependencies and it's the right place to make sure they are satisfied if you are going to use it:</p>
     <p class="outline" style="background-color: #EEE;">
     mkdir _build<span class="operator"> &amp;&amp;</span> cd _build<br>
@@ -251,7 +251,7 @@
     <p>Let's compile your application against Ambient sources. In the simplest form it's as easy as this:
     </p>
     <p class="outline" style="background-color: #EEE;">
-    mpicxx<span class="operator"> -</span>std<span class="operator">=</span>c<span class="operator">++</span><span class="int">11</span><span class="operator"> -</span>O3<span class="operator"> -</span>DNDEBUG<span class="operator"> -</span>I<span class="operator">/</span>opt<span class="operator">/</span>ambient<span class="operator">/</span>include app<span class="operator">.</span>cpp
+    mpicxx<span class="operator"> -</span>std<span class="operator">=</span>c<span class="operator">++</span><span class="int">14</span><span class="operator"> -</span>O3<span class="operator"> -</span>DNDEBUG<span class="operator"> -</span>I<span class="operator">/</span>opt<span class="operator">/</span>ambient<span class="operator">/</span>include app<span class="operator">.</span>cpp
     </p>
     <p>In example above we are using the default settings: MPI is assumed to be used in MPI_THREAD_FUNNELED mode and threading backend is determined from the compiler being used (Cilk in case of icc, OpenMP in case of gcc and none otherwise).
     </p>
@@ -261,7 +261,7 @@
         </ul>
     </p>
     <p>For example below we are going to use Ambient without MPI (as shared-memory-only) and with OpenMP instead of Cilk:</p>
-    <p class="outline" style="background-color: #EEE;">icpc<span class="operator"> -</span>std<span class="operator">=</span>c<span class="operator">++</span><span class="int">11</span><span class="operator"> -</span>O3<span class="operator"> -</span>DNDEBUG<span class="operator"> -</span>I<span class="operator">/</span>opt<span class="operator">/</span>ambient<span class="operator">/</span>include app<span class="operator">.</span>cpp<span class="operator"> -</span>DAMBIENT_MPI<span class="operator">=</span>MPI_DISABLE<span class="operator"> -</span>DAMBIENT_THREADING<span class="operator">=</span>OPENMP <span class="int">-openmp</span>
+    <p class="outline" style="background-color: #EEE;">icpc<span class="operator"> -</span>std<span class="operator">=</span>c<span class="operator">++</span><span class="int">14</span><span class="operator"> -</span>O3<span class="operator"> -</span>DNDEBUG<span class="operator"> -</span>I<span class="operator">/</span>opt<span class="operator">/</span>ambient<span class="operator">/</span>include app<span class="operator">.</span>cpp<span class="operator"> -</span>DAMBIENT_MPI<span class="operator">=</span>MPI_DISABLE<span class="operator"> -</span>DAMBIENT_THREADING<span class="operator">=</span>OPENMP <span class="int">-openmp</span>
     </p>
     <h3>Compilation: numeric dependencies</h3>
     <p>In case of numeric::matrix class being used, one will have to link against the Math/Plasma libraries (which means listing the libraries to link against and their paths).
