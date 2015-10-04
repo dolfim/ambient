@@ -87,7 +87,7 @@ $(document).ready(function(){
         window.open('guide.pdf');
     });
     $("img.revert").click(function(){
-        window.location.replace('http://ambient.comp-phys.org');
+        window.location.replace('http://ambientcxx.org');
     });
     $("div#make-options > div").click(function(){
         var target = $(this).attr("id");
