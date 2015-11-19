@@ -326,11 +326,11 @@
         <li>
             The explicit form is fairly similar to std::async call:<br>
 <pre><span class="keyword">template</span><span class="operator"> &lt;</span><span class="keyword"> class</span> Function<span class="operator">,</span><span class="keyword"> class</span><span class="operator">...</span> Args<span class="operator"> &gt;</span><span class="type">
-void</span> bind<span class="operator">(</span> Function<span class="operator">&amp;&amp;</span> f<span class="operator">,</span> Args<span class="operator">&amp;&amp;...</span> args<span class="operator"> );</span></pre>
+void</span> async<span class="operator">(</span> Function<span class="operator">&amp;&amp;</span> f<span class="operator">,</span> Args<span class="operator">&amp;&amp;...</span> args<span class="operator"> );</span></pre>
 
             This form supports both classical functions and lambdas. So typical invocation would look like this:<br>
 <pre>ambient<span class="operator">::</span>vector<span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;</span> vec<span class="operator">;</span>
-ambient<span class="operator">::</span>bind<span class="operator">([](</span>ambient<span class="operator">::</span>vector<span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;&amp;</span> v<span class="operator">){</span><span class="comment"> /* */</span><span class="operator"> },</span> vec<span class="operator">);</span>
+ambient<span class="operator">::</span>async<span class="operator">([](</span>ambient<span class="operator">::</span>vector<span class="operator">&lt;</span><span class="type">int</span><span class="operator">&gt;&amp;</span> v<span class="operator">){</span><span class="comment"> /* */</span><span class="operator"> },</span> vec<span class="operator">);</span>
 </pre>
         </li>
         <li>
@@ -562,7 +562,7 @@ ambient<span class="operator">::</span>bind<span class="operator">([](</span>amb
     <section><a name="future"><h2>Future and Atomic</h2></a>
     <h3 style="font-size: 14px;">Future</h3>
     <p>
-    Most of the time, after all of the heavy lifting is done using partitioned data-types, one has to get out with a single scalar (as an example one might consider vector reduction). Since all non-Ambient data-types are simply copied over for the bind calls - one cannot use a reference and expect it to store the output later after the computation. Instead a valid output scalar might have been a pointer but it won't be accessible by other processes.</p>
+    Most of the time, after all of the heavy lifting is done using partitioned data-types, one has to get out with a single scalar (as an example one might consider vector reduction). Since all non-Ambient data-types are simply copied over for the async calls - one cannot use a reference and expect it to store the output later after the computation. Instead a valid output scalar might have been a pointer but it won't be accessible by other processes.</p>
     <p>Therefor the ambient::future data-type was introduced - Ambient will make sure to transfer its memory to all of the processes as soon as the value was calculated. But unlike other Ambient data-types - future doesn't support versioning - so it will trigger computations as soon as its value is accessed or used.
     </p>
 
