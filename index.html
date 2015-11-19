@@ -158,8 +158,8 @@ void reverse(<span class="highlight">ambient::vector&lt;T&gt;</span>&amp; vec){
 
 int main(){
     <span class="highlight">ambient::vector&lt;int&gt;</span> a(100);
-    <span class="highlight">ambient::</span><span class="pink">bind_cpu</span>( reverse&lt;int&gt;, a );
-    <span class="highlight">ambient::</span><span class="pink">bind_cpu</span>( [](<span class="highlight">ambient::vector&lt;int&gt;</span>&amp; vec){ reverse(vec); }, a );
+    <span class="highlight">ambient::</span><span class="pink">async</span>( reverse&lt;int&gt;, a );
+    <span class="highlight">ambient::</span><span class="pink">async</span>( [](<span class="highlight">ambient::vector&lt;int&gt;</span>&amp; vec){ reverse(vec); }, a );
     <span class="highlight">ambient::sync();</span> <span class="dark-blue">// execute in parallel: dependencies are respected</span>
     return 0;
 }</span></code></pre>
@@ -199,7 +199,7 @@ int main(){
 <span class="dark-blue"># mkl dependencies if ambient::matrix class is used</span>
 <span class="blue">DEPS</span>?= -mkl
 
-<span class="blue">FLAGS</span>?= -std=c++14 -O3 -DNDEBUG -I<span class="blue">$(AMBIENT_INCLUDE)</span>
+<span class="blue">FLAGS</span>?= -std=c++11 -O3 -DNDEBUG -I<span class="blue">$(AMBIENT_INCLUDE)</span>
 
 <span class="blue">app:</span> app.cpp
     <span class="red"><span class="blue">$(CXX)</span> app.cpp -o app <span class="blue">$(FLAGS) $(DEPS)</span></span>
@@ -215,7 +215,7 @@ int main(){
 <span class="dark-blue"># mkl dependencies if ambient::matrix class is used</span>
 <span class="blue">DEPS</span>?= -mkl
 
-<span class="blue">FLAGS</span>?= -std=c++14 -O3 -DNDEBUG -DAMBIENT_MPI=MPI_DISABLE -I<span class="blue">$(AMBIENT_INCLUDE)</span>
+<span class="blue">FLAGS</span>?= -std=c++11 -O3 -DNDEBUG -DAMBIENT_MPI=MPI_DISABLE -I<span class="blue">$(AMBIENT_INCLUDE)</span>
 
 <span class="blue">app:</span> app.cpp
     <span class="red"><span class="blue">$(CXX)</span> app.cpp -o app <span class="blue">$(FLAGS) $(DEPS)</span></span>
@@ -232,7 +232,7 @@ int main(){
 <span class="blue">DEPS</span>?= -I$(MKLROOT)/include -L$(MKLROOT)/lib/intel64 <span class="red">\</span>
        -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lpthread -lm -m64
 
-<span class="blue">FLAGS</span>?= -std=c++14 -O3 -DNDEBUG -DAMBIENT_MPI=MPI_DISABLE -fopenmp -I<span class="blue">$(AMBIENT_INCLUDE)</span>
+<span class="blue">FLAGS</span>?= -std=c++11 -O3 -DNDEBUG -DAMBIENT_MPI=MPI_DISABLE -fopenmp -I<span class="blue">$(AMBIENT_INCLUDE)</span>
 
 <span class="blue">app:</span> app.cpp
     <span class="red"><span class="blue">$(CXX)</span> app.cpp -o app <span class="blue">$(FLAGS) $(DEPS)</span></span>
