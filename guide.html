@@ -335,9 +335,9 @@ ambient<span class="operator">::</span>async<span class="operator">([](</span>am
         </li>
         <li>
             The implicit form is designed to keep code appearance close to its natural form: one just has to export the target function under some alias name which can be called then the same way as the original function:<br>
-<pre>AMBIENT_STATIC_BIND_TEMPLATE<span class="operator">(</span>foo<span class="operator">,</span> foo_async<span class="operator">);</span></pre>
+<pre>AMBIENT_STATIC_ASYNC_TEMPLATE<span class="operator">(</span>foo<span class="operator">,</span> foo_async<span class="operator">);</span></pre>
             or for not templated functions:
-<pre>AMBIENT_STATIC_BIND<span class="operator">(</span>foo<span class="operator">,</span> foo_async<span class="operator">);</span></pre>
+<pre>AMBIENT_STATIC_ASYNC<span class="operator">(</span>foo<span class="operator">,</span> foo_async<span class="operator">);</span></pre>
         </li>
     </ul>
     </p>
