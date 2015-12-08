@@ -61,16 +61,16 @@
     <div class="how" id="part0" style="height: 73px;">
         <div class="title" style="position: absolute; display: inline-block; margin-top: 20px; margin-left: 17px;"><span>Ambient</span>
             <div id="motto">
-           Big data made easy. Develop fast, scalable applications for<br> cloud and cluster Linux server environments.<br>
+            Develop fast and scalable scientific computing applications<br> for cloud and cluster Linux server environments.<br><br>
             </div>
         </div>
     </div>
     <div class="cell-center how" id="part1" style="font-size: 14px; padding-left: 35px; line-height: 150%;">
         <div class="title-part" style="margin-bottom: 65px;">What is it</div>
 
-        Ambient is a library that makes parallel programming easy: existing single-core apps can be <i>stretched</i> onto available resources. Just bind function calls to a particular machine.<br><br> Ambient does the rest: <i>memory transport (CUDA or MPI), parallelism extraction and threading</i>.
+        A framework for distributed parallel programming based upon <a href="http://bindcxx.org">partitioned global workflow</a> model that enables automatic parallelism extraction in MPI/threading execution environment.<br><br> The framework provides a selection of parallel linear algebra and vector algorithms using partitioned vector and tiled matrix class containers.
     </div>
-    <div class="cell-center how" id="part3" style="font-size: 14px; padding-left: 30px;">
+    <div class="cell-center how" id="part2" style="font-size: 14px; padding-left: 30px;">
 
         <div class="example">
 		<div class="perf">Performance chart</div><img class="perf_detail" src="images/gemm.png">
@@ -102,7 +102,7 @@
         </div>
 
     </div>
-    <div class="cell-center how" id="part4" style="font-size: 14px; padding-left: 30px;">
+    <div class="cell-center how" id="part3" style="font-size: 14px; padding-left: 30px;">
 
         <div class="example">
 		<div class="perf">Performance chart</div><img class="perf_detail" src="images/pgemm.png">
@@ -136,33 +136,6 @@
      <span class="highlight">ambient::sync();</span>
      return 0;
 }</span></code></pre>  
-<!--}}}-->
-        </div>
-
-    </div>
-    <div class="cell-center how" id="part2" style="font-size: 14px; padding-left: 30px;">
-
-        <div class="example">
-                <div class="title-part">Example: Binding calls</div>
-<!--{{{-->
-<pre class="example"><code><span class="highlight">#include "ambient/ambient.hpp"</span>
-<span class="highlight">#include "ambient/container/vector.hpp"</span>
-<span class="black">
-template&lt;typename T&gt;
-void reverse(<span class="highlight">ambient::vector&lt;T&gt;</span>&amp; vec){
-    int start = 0, end = vec.size();
-    while((start != end) &amp;&amp; (start != --end)){
-        std::swap(vec[start],vec[end]); start++;
-    }
-}
-
-int main(){
-    <span class="highlight">ambient::vector&lt;int&gt;</span> a(100);
-    <span class="highlight">ambient::</span><span class="pink">async</span>( reverse&lt;int&gt;, a );
-    <span class="highlight">ambient::</span><span class="pink">async</span>( [](<span class="highlight">ambient::vector&lt;int&gt;</span>&amp; vec){ reverse(vec); }, a );
-    <span class="highlight">ambient::sync();</span> <span class="dark-blue">// execute in parallel: dependencies are respected</span>
-    return 0;
-}</span></code></pre>
 <!--}}}-->
         </div>
 

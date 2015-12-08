@@ -1,7 +1,7 @@
 var keys_height = 0;
 var active_part = "part0";
 var locator = 0;
-var locator_max = 5;
+var locator_max = 4;
 var mobile = true;
 
 function adjustScreen(){
